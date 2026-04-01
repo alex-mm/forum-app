@@ -65,7 +65,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function signInWithGitHub() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
-      options: { redirectTo: window.location.origin },
+      options: {
+        redirectTo: `${window.location.origin}/`,
+        scopes: 'user:email',
+      },
     })
     if (error) throw error
   }

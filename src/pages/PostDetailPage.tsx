@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import MDEditor from '@uiw/react-md-editor'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { Post, Comment } from '../types'
@@ -25,7 +26,6 @@ export default function PostDetailPage() {
       setPost(postData as any)
       setComments((commentsData as any[]) ?? [])
       setLoading(false)
-      // 增加浏览量
       await supabase.from('posts').update({ view_count: (postData as any)?.view_count + 1 }).eq('id', id)
     }
     fetchData()
@@ -60,7 +60,9 @@ export default function PostDetailPage() {
           <span>👁 {post.view_count} 浏览</span>
           <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: zhCN })}</span>
         </div>
-        <div className="post-content">{post.content}</div>
+        <div className="post-content" data-color-mode="light">
+          <MDEditor.Markdown source={post.content} style={{ background: 'transparent', padding: '1rem 0' }} />
+        </div>
       </div>
 
       <hr className="divider" />
@@ -80,7 +82,6 @@ export default function PostDetailPage() {
         <form onSubmit={handleSubmitComment} style={{ marginTop: '1.5rem' }}>
           <div className="form-group">
             <textarea
-              className="form-group"
               placeholder="写下你的评论..."
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}

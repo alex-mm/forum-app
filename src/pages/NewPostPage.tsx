@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import MDEditor from '@uiw/react-md-editor'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 
@@ -36,7 +37,7 @@ export default function NewPostPage() {
   }
 
   return (
-    <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+    <div style={{ maxWidth: '860px', margin: '0 auto' }}>
       <h1 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: 700 }}>发布新帖子</h1>
       <div className="card">
         {error && <div className="error-msg">{error}</div>}
@@ -49,13 +50,27 @@ export default function NewPostPage() {
           </div>
           <div className="form-group">
             <label>标题</label>
-            <input type="text" placeholder="请输入帖子标题" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} />
+            <input
+              type="text"
+              placeholder="请输入帖子标题"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={100}
+            />
           </div>
           <div className="form-group">
-            <label>内容</label>
-            <textarea placeholder="请输入帖子内容..." value={content} onChange={(e) => setContent(e.target.value)} />
+            <label>内容（支持 Markdown）</label>
+            <div data-color-mode="light">
+              <MDEditor
+                value={content}
+                onChange={(val) => setContent(val ?? '')}
+                height={360}
+                preview="live"
+                textareaProps={{ placeholder: '支持 Markdown 语法，左侧编辑，右侧实时预览...' }}
+              />
+            </div>
           </div>
-          <button type="submit" className="form-submit" disabled={submitting}>
+          <button type="submit" className="form-submit" disabled={submitting} style={{ marginTop: '1rem' }}>
             {submitting ? '发布中...' : '发布帖子'}
           </button>
         </form>
