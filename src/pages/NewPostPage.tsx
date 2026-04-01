@@ -64,9 +64,9 @@ export default function NewPostPage() {
               <MDEditor
                 value={content}
                 onChange={(val) => setContent(val ?? '')}
-                height={360}
-                preview="edit"
-                textareaProps={{ placeholder: '支持 Markdown 语法，点击上方 👁 切换预览...' }}
+                height={240}
+                visibleDragbar={false}
+                textareaProps={{ placeholder: '支持 Markdown 语法，点击右上角切换预览...' }}
               />
             </div>
           </div>
