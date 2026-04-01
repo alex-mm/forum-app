@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
 export default function RegisterPage() {
-  const { signUp, signInWithGoogle, signInWithGitHub } = useAuth()
+  const { signUp, signInWithGitHub } = useAuth()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -29,10 +29,9 @@ export default function RegisterPage() {
     }
   }
 
-  async function handleOAuth(provider: 'google' | 'github') {
+  async function handleGitHubLogin() {
     try {
-      if (provider === 'google') await signInWithGoogle()
-      else await signInWithGitHub()
+      await signInWithGitHub()
     } catch (err: any) {
       setError(err.message)
     }
@@ -59,10 +58,7 @@ export default function RegisterPage() {
       <div className="auth-card">
         <h2>注册</h2>
         {error && <div className="error-msg">{error}</div>}
-        <button className="btn-oauth" onClick={() => handleOAuth('google')}>
-          <span>🔵</span> 使用 Google 注册
-        </button>
-        <button className="btn-oauth" onClick={() => handleOAuth('github')}>
+        <button className="btn-oauth" onClick={handleGitHubLogin}>
           <span>⚫</span> 使用 GitHub 注册
         </button>
         <div className="or-divider">或</div>

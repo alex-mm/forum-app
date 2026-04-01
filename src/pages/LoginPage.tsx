@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
 export default function LoginPage() {
-  const { signIn, signInWithGoogle, signInWithGitHub } = useAuth()
+  const { signIn, signInWithGitHub } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -24,10 +24,9 @@ export default function LoginPage() {
     }
   }
 
-  async function handleOAuth(provider: 'google' | 'github') {
+  async function handleGitHubLogin() {
     try {
-      if (provider === 'google') await signInWithGoogle()
-      else await signInWithGitHub()
+      await signInWithGitHub()
     } catch (err: any) {
       setError(err.message)
     }
@@ -38,10 +37,7 @@ export default function LoginPage() {
       <div className="auth-card">
         <h2>登录</h2>
         {error && <div className="error-msg">{error}</div>}
-        <button className="btn-oauth" onClick={() => handleOAuth('google')}>
-          <span>🔵</span> 使用 Google 登录
-        </button>
-        <button className="btn-oauth" onClick={() => handleOAuth('github')}>
+        <button className="btn-oauth" onClick={handleGitHubLogin}>
           <span>⚫</span> 使用 GitHub 登录
         </button>
         <div className="or-divider">或</div>
