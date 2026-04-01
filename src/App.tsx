@@ -4,6 +4,7 @@ import Layout from './components/layout/Layout'
 import HomePage from './pages/HomePage'
 import PostDetailPage from './pages/PostDetailPage'
 import NewPostPage from './pages/NewPostPage'
+import EditPostPage from './pages/EditPostPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ProfilePage from './pages/ProfilePage'
@@ -29,6 +30,14 @@ function AppRoutes() {
             element={
               <ProtectedRoute>
                 <NewPostPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="edit-post/:id"
+            element={
+              <ProtectedRoute>
+                <EditPostPage />
               </ProtectedRoute>
             }
           />

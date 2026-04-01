@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { supabase } from '../lib/supabase'
@@ -11,11 +11,27 @@ import { zhCN } from 'date-fns/locale'
 export default function PostDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { session, user } = useAuth()
+  const navigate = useNavigate()
   const [post, setPost] = useState<Post | null>(null)
   const [comments, setComments] = useState<Comment[]>([])
   const [commentText, setCommentText] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [loading, setLoading] = useState(true)
+
+  const isAuthor = user?.id === (post?.author_id)
+
+  async function handleDelete() {
+    if (!window.confirm('确定要删除这篇帖子吗？此操作不可恢复。')) return
+    setDeleting(true)
+    const { error } = await supabase.from('posts').delete().eq('id', id)
+    if (!error) {
+      navigate('/', { replace: true })
+    } else {
+      alert('删除失败：' + error.message)
+      setDeleting(false)
+    }
+  }
 
   useEffect(() => {
     if (!id) return
@@ -54,12 +70,35 @@ export default function PostDetailPage() {
   return (
     <div>
       <div className="card">
-        <div className="post-category">{post.category}</div>
-        <h1 className="post-detail-title">{post.title}</h1>
-        <div className="post-meta">
-          <span>👤 {(post.author as any)?.username ?? '匿名'}</span>
-          <span>👁 {post.view_count} 浏览</span>
-          <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: zhCN })}</span>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
+          <div style={{ flex: 1 }}>
+            <div className="post-category">{post.category}</div>
+            <h1 className="post-detail-title">{post.title}</h1>
+            <div className="post-meta">
+              <span>👤 {(post.author as any)?.username ?? '匿名'}</span>
+              <span>👁 {post.view_count} 浏览</span>
+              <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: zhCN })}</span>
+            </div>
+          </div>
+          {isAuthor && (
+            <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0, marginTop: '0.25rem' }}>
+              <button
+                className="btn-secondary"
+                onClick={() => navigate(`/edit-post/${id}`)}
+                style={{ fontSize: '0.85rem', padding: '0.35rem 0.85rem' }}
+              >
+                ✏️ 编辑
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={handleDelete}
+                disabled={deleting}
+                style={{ fontSize: '0.85rem', padding: '0.35rem 0.85rem', color: '#ef4444', borderColor: '#fca5a5' }}
+              >
+                {deleting ? '删除中...' : '🗑 删除'}
+              </button>
+            </div>
+          )}
         </div>
         <div className="md-preview" style={{ marginTop: '1.5rem' }}>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
