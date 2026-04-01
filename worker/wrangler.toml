@@ -1,0 +1,8 @@
+name = "forum-worker"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# 敏感变量通过 wrangler secret put 命令设置，不写在这里
+# wrangler secret put SUPABASE_URL
+# wrangler secret put SUPABASE_SERVICE_ROLE_KEY
