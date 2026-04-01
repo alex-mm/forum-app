@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import MDEditor from '@uiw/react-md-editor'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 
 const CATEGORIES = ['技术', '生活', '问答', '公告', '闲聊']
+
+type EditorTab = 'edit' | 'preview'
 
 export default function NewPostPage() {
   const { user } = useAuth()
@@ -12,6 +15,7 @@ export default function NewPostPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [category, setCategory] = useState(CATEGORIES[0])
+  const [activeTab, setActiveTab] = useState<EditorTab>('edit')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -59,18 +63,43 @@ export default function NewPostPage() {
             />
           </div>
           <div className="form-group">
-            <label>内容（支持 Markdown）</label>
-            <div data-color-mode="light">
-              <MDEditor
-                value={content}
-                onChange={(val) => setContent(val ?? '')}
-                height={240}
-                visibleDragbar={false}
-                textareaProps={{ placeholder: '支持 Markdown 语法，点击右上角切换预览...' }}
-              />
+            <div className="editor-header">
+              <label>内容</label>
+              <div className="editor-tabs">
+                <button
+                  type="button"
+                  className={activeTab === 'edit' ? 'editor-tab active' : 'editor-tab'}
+                  onClick={() => setActiveTab('edit')}
+                >
+                  ✏️ 编辑
+                </button>
+                <button
+                  type="button"
+                  className={activeTab === 'preview' ? 'editor-tab active' : 'editor-tab'}
+                  onClick={() => setActiveTab('preview')}
+                >
+                  👁 预览
+                </button>
+              </div>
             </div>
+            {activeTab === 'edit' ? (
+              <textarea
+                className="md-textarea"
+                placeholder="支持 Markdown 语法：**粗体**、# 标题、`代码`、> 引用..."
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+              />
+            ) : (
+              <div className="md-preview">
+                {content ? (
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+                ) : (
+                  <span style={{ color: '#9ca3af' }}>暂无内容，请先在编辑模式输入...</span>
+                )}
+              </div>
+            )}
           </div>
-          <button type="submit" className="form-submit" disabled={submitting} style={{ marginTop: '1rem' }}>
+          <button type="submit" className="form-submit" disabled={submitting}>
             {submitting ? '发布中...' : '发布帖子'}
           </button>
         </form>

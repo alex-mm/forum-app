@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import MDEditor from '@uiw/react-md-editor'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { Post, Comment } from '../types'
@@ -60,8 +61,8 @@ export default function PostDetailPage() {
           <span>👁 {post.view_count} 浏览</span>
           <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: zhCN })}</span>
         </div>
-        <div className="post-content" data-color-mode="light">
-          <MDEditor.Markdown source={post.content} style={{ background: 'transparent', padding: '1rem 0' }} />
+        <div className="md-preview" style={{ marginTop: '1.5rem' }}>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
         </div>
       </div>
 
