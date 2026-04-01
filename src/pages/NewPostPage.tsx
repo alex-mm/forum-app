@@ -65,8 +65,8 @@ export default function NewPostPage() {
                 value={content}
                 onChange={(val) => setContent(val ?? '')}
                 height={360}
-                preview="live"
-                textareaProps={{ placeholder: '支持 Markdown 语法，左侧编辑，右侧实时预览...' }}
+                preview="edit"
+                textareaProps={{ placeholder: '支持 Markdown 语法，点击上方 👁 切换预览...' }}
               />
             </div>
           </div>
